@@ -13,17 +13,29 @@ function App() {
   const [wind, setWind] = useState(null);
   const [country, setCountry] = useState("");
   const [dataFetched, setDataFetched] = useState(false);
+  const [date, setDate] = useState(new Date());
+
+  useEffect(() => {
+    var timerID = setInterval(() => tick(), 1000);
+    return function cleanup() {
+      clearInterval(timerID);
+    };
+  });
+
+  function tick() {
+    setDate(new Date());
+  }
 
   const fetchData = async (e) => {
     e.preventDefault();
 
-    try{
+    try {
       const res = await axios.get(
         `https://api.openweathermap.org/data/2.5/weather?q=${userLocation}&appid=${process.env.REACT_APP_API_KEY}&units=metric`
       );
-  
+
       const data = await res.data;
-  
+
       setDegrees(data.main.temp);
       setLocation(data.name);
       setDes(data.weather[0].description);
@@ -31,16 +43,14 @@ function App() {
       setHumidity(data.main.humidity);
       setWind(data.wind.speed);
       setCountry(data.sys.country);
-  
-      setDataFetched(true);
-  
-      console.log(data);
-    }catch(err){
-      console.log(err);
-      alert("Please enter a valid location!")
-    }
 
-    
+      setDataFetched(true);
+
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+      alert("Please enter a valid location!");
+    }
   };
 
   const defaultDataFetch = async () => {
@@ -100,7 +110,7 @@ function App() {
 
             <div className="weather-country">
               <h3>{country}</h3>
-              <h2 className="weather-date">3/30/2022, 2:03:12 AM</h2>
+              <h2 className="weather-date">{date.toLocaleString()}</h2>
             </div>
           </div>
         </div>
